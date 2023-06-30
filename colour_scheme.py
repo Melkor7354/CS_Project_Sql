@@ -1,3 +1,3 @@
-primary = '111111'
-secondary = '124FFF'
-text = '543443'
+primary = '#111111'
+secondary = '#124FFF'
+text = '#00ffff'
