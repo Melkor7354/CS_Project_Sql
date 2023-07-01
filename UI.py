@@ -1,7 +1,7 @@
 import tkinter as tk
 import colour_scheme as c
 import ctypes as ct
-import sql
+import sql_updated
 
 
 def dark_title_bar(window):
@@ -19,10 +19,11 @@ class UI(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
         self._frame = None
-        self.sign_up = False
+        sql_updated.initialize()
+        self.signed_up = sql_updated.signed_in()
 
         def logged_in():
-            if self.sign_up is False:
+            if self.signed_up is False:
                 self.switch_frame(Start)
             else:
                 self.switch_frame(Authorization)
@@ -55,8 +56,7 @@ class Start(tk.Frame):
         def submit():
             u = username.get()
             p = password.get()
-            sql.sign_up(username=u, password=p)
-            UI.sign_up = True
+            sql_updated.sign_up(username=u, password=p)
             master.switch_frame(Authorization)
 
         submit = tk.Button(text='submit', command=submit)
@@ -72,13 +72,17 @@ class Authorization(tk.Frame):
         password = tk.Entry(bg=c.secondary, fg=c.text)
         username.place(rely=0.2)
         password.place(rely=0.4)
+        label = tk.Label(text="This is the login page", fg=c.text, bg=c.secondary, width=UI.winfo_screenwidth(self)-2000)
+        label.place(rely=0.8)
 
         def login():
             u = username.get()
             p = password.get()
-            auth = sql.login(username=u, password=p)
+            auth = sql_updated.login(username=u, password=p)
             if auth is True:
                 master.switch_frame(Welcome)
+            else:
+                label.config(text="Authorization Failed. Please try again.")
 
         login = tk.Button(text='Login', command=login)
         login.place(rely=0.6)
@@ -89,7 +93,7 @@ class Welcome(tk.Frame):
         tk.Frame.__init__(self)
         self.config(height=UI.winfo_screenheight(self), width=UI.winfo_screenwidth(self), bg=c.primary)
         TopBar().place(rely=0)
-        a = tk.Label(text='WELCOMEEEE', width=UI.winfo_screenwidth(self), fg='white', bg=c.primary)
+        a = tk.Label(text='WELCOMEEEE', width=UI.winfo_screenwidth(self)-2000, fg=c.text, bg=c.secondary)
         a.place(rely=0.4)
 
 

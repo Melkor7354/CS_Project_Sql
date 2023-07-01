@@ -1,33 +1,34 @@
 import sqlite3 as sql
 
 
-def test():
-    con = sql.connect('test.db')
-    con.execute('''CREATE TABLE IF NOT EXISTS Test(ID int primary key not null, Name varchar(20) not null)''')
-    con.execute('''INSERT INTO Test VALUES(1, 'Eklavya') ''')
+def initialize():
+    con = sql.connect('Newer.db')
+    con.execute("CREATE TABLE IF NOT EXISTS Auth(username varchar(20) primary key not null, password varchar(20) not null)")
+    con.execute("CREATE TABLE IF NOT EXISTS SignedIn(Boolean int not null)")
     con.commit()
-    cur = con.cursor()
-    a = cur.fetchall()
-    return a
 
 
-def que():
-    con = sql.connect('test.db')
+def signed_in():
+    con = sql.connect('Newer.db')
     cur = con.cursor()
-    cur.execute('''SELECT * FROM Test;''')
-    a = cur.fetchall()
-    return a
+    cur.execute("SELECT * FROM SignedIn")
+    signed_up = cur.fetchall()
+    if len(signed_up) == 0:
+        return False
+    else:
+        return True
 
 
 def sign_up(username, password):
-    con = sql.connect('test.db')
+    con = sql.connect('Newer.db')
     con.execute('''CREATE TABLE IF NOT EXISTS Auth(Username varchar(20) not null, password varchar(20) not null)''')
     con.execute('''INSERT INTO Auth VALUES("{}", "{}")'''.format(username, password))
+    con.execute('''INSERT INTO SignedIn VALUES(1)''')
     con.commit()
 
 
 def login(username, password):
-    con = sql.connect('test.db')
+    con = sql.connect('Newer.db')
     cur = con.cursor()
     cur.execute('''SELECT * FROM Auth WHERE username="{}" AND password="{}"'''.format(username, password))
     a = cur.fetchall()
