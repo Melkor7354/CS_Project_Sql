@@ -19,7 +19,15 @@ class UI(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
         self._frame = None
-        self.switch_frame(Authorization)
+        self.sign_up = False
+
+        def logged_in():
+            if self.sign_up is False:
+                self.switch_frame(Start)
+            else:
+                self.switch_frame(Authorization)
+
+        logged_in()
         dark_title_bar(self)
         self.minsize(self.winfo_screenwidth()-300, self.winfo_screenheight()-200)
         self.maxsize(self.winfo_screenwidth()-300, self.winfo_screenheight()-200)
@@ -33,16 +41,53 @@ class UI(tk.Tk):
         self._frame.pack()
 
 
+class Start(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self)
+        self.config(height=UI.winfo_screenheight(self), width=UI.winfo_screenwidth(self), bg=c.primary)
+        TopBar().pack()
+        tk.Label(text='This is the signup page. Enter the username and password for future use.', bg=c.primary, fg=c.text).pack()
+        username = tk.Entry(bg=c.secondary, fg=c.text)
+        password = tk.Entry(bg=c.secondary, fg=c.text)
+        username.pack()
+        password.pack()
+
+        def submit():
+            u = username.get()
+            p = password.get()
+            sql.sign_up(username=u, password=p)
+            UI.sign_up = True
+            master.switch_frame(Authorization)
+
+        submit = tk.Button(text='submit', command=submit)
+        submit.pack()
+
+
 class Authorization(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self)
-        def print():
-            c = sql.que()
-            b = str(c)
-            a.config(text=b)
         self.config(height=UI.winfo_screenheight(self), width=UI.winfo_screenwidth(self), bg=c.primary)
         TopBar().pack()
-        tk.Button(text='Print', command=print).pack()
+        username = tk.Entry(bg=c.secondary, fg=c.text)
+        password = tk.Entry(bg=c.secondary, fg=c.text)
+        username.pack()
+        password.pack()
+
+        def login():
+            u = username.get()
+            p = password.get()
+            auth = sql.login(username=u, password=p)
+            if auth is True:
+                master.switch_frame(Welcome)
+
+        login = tk.Button(text='Login', command=login)
+        login.pack()
+
+
+class Welcome(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self)
+        TopBar().pack()
         a = tk.Label(text='Nothing', width=UI.winfo_screenwidth(self), fg=c.text, bg=c.primary)
         a.pack()
 
