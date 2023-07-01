@@ -45,12 +45,12 @@ class Start(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self)
         self.config(height=UI.winfo_screenheight(self), width=UI.winfo_screenwidth(self), bg=c.primary)
-        TopBar().pack()
-        tk.Label(text='This is the signup page. Enter the username and password for future use.', bg=c.primary, fg=c.text).pack()
+        TopBar().place(rely=0)
+        tk.Label(text='This is the signup page. Enter the username and password for future use.', bg=c.primary, fg=c.text).place(rely=0.2)
         username = tk.Entry(bg=c.secondary, fg=c.text)
         password = tk.Entry(bg=c.secondary, fg=c.text)
-        username.pack()
-        password.pack()
+        username.place(rely=0.4)
+        password.place(rely=0.6)
 
         def submit():
             u = username.get()
@@ -60,18 +60,18 @@ class Start(tk.Frame):
             master.switch_frame(Authorization)
 
         submit = tk.Button(text='submit', command=submit)
-        submit.pack()
+        submit.place(rely=0.8)
 
 
 class Authorization(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self)
         self.config(height=UI.winfo_screenheight(self), width=UI.winfo_screenwidth(self), bg=c.primary)
-        TopBar().pack()
+        TopBar().place(rely=0)
         username = tk.Entry(bg=c.secondary, fg=c.text)
         password = tk.Entry(bg=c.secondary, fg=c.text)
-        username.pack()
-        password.pack()
+        username.place(rely=0.2)
+        password.place(rely=0.4)
 
         def login():
             u = username.get()
@@ -81,15 +81,16 @@ class Authorization(tk.Frame):
                 master.switch_frame(Welcome)
 
         login = tk.Button(text='Login', command=login)
-        login.pack()
+        login.place(rely=0.6)
 
 
 class Welcome(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self)
-        TopBar().pack()
-        a = tk.Label(text='Nothing', width=UI.winfo_screenwidth(self), fg=c.text, bg=c.primary)
-        a.pack()
+        self.config(height=UI.winfo_screenheight(self), width=UI.winfo_screenwidth(self), bg=c.primary)
+        TopBar().place(rely=0)
+        a = tk.Label(text='WELCOMEEEE', width=UI.winfo_screenwidth(self), fg='white', bg=c.primary)
+        a.place(rely=0.4)
 
 
 class TopBar(tk.Frame):
