@@ -47,11 +47,14 @@ class Start(tk.Frame):
         tk.Frame.__init__(self)
         self.config(height=UI.winfo_screenheight(self), width=UI.winfo_screenwidth(self), bg=c.primary)
         TopBar().place(rely=0)
-        tk.Label(text='This is the signup page. Enter the username and password for future use.', bg=c.primary, fg=c.text).place(rely=0.2)
-        username = tk.Entry(bg=c.secondary, fg=c.text)
-        password = tk.Entry(bg=c.secondary, fg=c.text)
-        username.place(rely=0.4)
-        password.place(rely=0.6)
+        tk.Label(text='''This is the sign up page.
+Enter your username and password.''', fg=c.text, bg=c.secondary, width=40).place(rely=0.40, relx=0.395)
+        username = tk.Entry(bg=c.secondary, fg=c.text, width=30)
+        password = tk.Entry(bg=c.secondary, fg=c.text, width=30)
+        username.place(relx=0.46, rely=0.48)
+        password.place(relx=0.46, rely=0.52)
+        tk.Label(text='Username:', bg=c.primary, fg=c.text, width=10).place(rely=0.48, relx=0.395)
+        tk.Label(text='Password:', bg=c.primary, fg=c.text, width=10).place(rely=0.52, relx=0.395)
 
         def submit():
             u = username.get()
@@ -60,7 +63,7 @@ class Start(tk.Frame):
             master.switch_frame(Authorization)
 
         submit = tk.Button(text='submit', command=submit)
-        submit.place(rely=0.8)
+        submit.place(rely=0.6, relx=0.5)
 
 
 class Authorization(tk.Frame):
@@ -68,12 +71,14 @@ class Authorization(tk.Frame):
         tk.Frame.__init__(self)
         self.config(height=UI.winfo_screenheight(self), width=UI.winfo_screenwidth(self), bg=c.primary)
         TopBar().place(rely=0)
-        username = tk.Entry(bg=c.secondary, fg=c.text)
-        password = tk.Entry(bg=c.secondary, fg=c.text)
-        username.place(rely=0.2)
-        password.place(rely=0.4)
-        label = tk.Label(text="This is the login page", fg=c.text, bg=c.secondary, width=UI.winfo_screenwidth(self)-2000)
-        label.place(rely=0.8)
+        username = tk.Entry(bg=c.secondary, fg=c.text, width=30)
+        password = tk.Entry(bg=c.secondary, fg=c.text, width=30)
+        username.place(relx=0.46, rely=0.48)
+        password.place(relx=0.46, rely=0.52)
+        tk.Label(text='Username:', bg=c.primary, fg=c.text, width=10).place(rely=0.48, relx=0.395)
+        tk.Label(text='Password:', bg=c.primary, fg=c.text, width=10).place(rely=0.52, relx=0.395)
+        label = tk.Label(text="This is the login page", fg=c.text, bg=c.secondary, width=40)
+        label.place(rely=0.40, relx=0.395)
 
         def login():
             u = username.get()
@@ -84,8 +89,8 @@ class Authorization(tk.Frame):
             else:
                 label.config(text="Authorization Failed. Please try again.")
 
-        login = tk.Button(text='Login', command=login)
-        login.place(rely=0.6)
+        login = tk.Button(text='Login', command=login,)
+        login.place(rely=0.6, relx=0.5)
 
 
 class Welcome(tk.Frame):
