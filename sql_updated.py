@@ -16,8 +16,8 @@ def initialize():
     con.execute('''CREATE TABLE IF NOT EXISTS Auth(username varchar(20) primary key not null, 
     password varchar(20) not null)''')
     con.execute("CREATE TABLE IF NOT EXISTS SignedIn(Boolean int not null)")
-    con.execute('''CREATE TABLE IF NOT EXISTS Products(Product_ID int primary key auto_increment, Product_Name varchar(30) not null, 
-    Product_Type varchar(20)''')
+    con.execute('''CREATE TABLE IF NOT EXISTS Products(Product_ID integer primary key AUTOINCREMENT, Product_Name varchar(30) not null, 
+    Product_Type varchar(20))''')
     con.execute('''CREATE TABLE IF NOT EXISTS Inventory(Product_ID int not null, product_name varchar(30) not null, 
     quantity int not null, FOREIGN KEY(Product_ID) REFERENCES Products(Product_ID) ON DELETE CASCADE)''')
     con.commit()

@@ -119,7 +119,7 @@ class DataEntry(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self)
         self.config(width=UI.winfo_screenwidth(self), height=UI.winfo_screenheight(self), bg=c.primary)
-        self.i = 1
+        self.i = 0
         self.values = []
         self.create()
         self.sub()
@@ -141,13 +141,14 @@ class DataEntry(tk.Frame):
         globals()['Variable{}'.format(str(self.i))].place(relx=0.28, y=((self.i + 1) * 23)+150)
         globals()['variable{}'.format(str(self.i))] = tk.Entry(bg=c.secondary, fg=c.text, width=40)
         globals()['variable{}'.format(str(self.i))].place(relx=0.5, y=((self.i + 1) * 23)+150)
-        globals()['Var{}'.format(str(self.i))] = globals()['Variable{}'.format(str(self.i))].get()
-        globals()['var{}'.format(str(self.i))] = globals()['variable{}'.format(str(self.i))].get()
         self.i += 1
 
     def submit(self):
         for i in range(self.i):
+            globals()['Var{}'.format(str(i))] = globals()['Variable{}'.format(str(i))].get()
+            globals()['var{}'.format(str(i))] = globals()['variable{}'.format(str(i))].get()
             self.values.append([globals()['Var{}'.format(str(i))], globals()['var{}'.format(str(i))]])
+        print(self.values)
 
 
 app = UI()
