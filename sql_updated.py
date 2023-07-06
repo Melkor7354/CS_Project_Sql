@@ -1,7 +1,6 @@
 import sqlite3 as sql
 import os
 
-
 parent_dir = os.path.expanduser('~')
 _dir = 'billing_db'
 path = os.path.join(parent_dir, _dir)
@@ -14,8 +13,13 @@ def initialize():
     except FileExistsError:
         pass
     con = sql.connect(r'{}\x.db'.format(path))
-    con.execute("CREATE TABLE IF NOT EXISTS Auth(username varchar(20) primary key not null, password varchar(20) not null)")
+    con.execute('''CREATE TABLE IF NOT EXISTS Auth(username varchar(20) primary key not null, 
+    password varchar(20) not null)''')
     con.execute("CREATE TABLE IF NOT EXISTS SignedIn(Boolean int not null)")
+    con.execute('''CREATE TABLE IF NOT EXISTS Products(Product_ID int primary key auto_increment, Product_Name varchar(30) not null, 
+    Product_Type varchar(20)''')
+    con.execute('''CREATE TABLE IF NOT EXISTS Inventory(Product_ID int not null, product_name varchar(30) not null, 
+    quantity int not null, FOREIGN KEY(Product_ID) REFERENCES Products(Product_ID) ON DELETE CASCADE)''')
     con.commit()
 
 
@@ -48,3 +52,12 @@ def login(username, password):
         return True
     else:
         return False
+
+
+def update_inventory(values):
+    con = sql.connect(r'{}\x.db'.format(path))
+    for i in values:
+        try:
+            pass
+        except:
+            pass

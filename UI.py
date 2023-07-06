@@ -85,7 +85,7 @@ class Authorization(tk.Frame):
             p = password.get()
             auth = sql_updated.login(username=u, password=p)
             if auth is True:
-                master.switch_frame(Welcome)
+                master.switch_frame(DataEntry)
             else:
                 label.config(text="Authorization Failed. Please try again.")
 
@@ -112,7 +112,42 @@ class TopBar(tk.Frame):
             text=''' Made by: 
                     EKLAVYA RAMAN &
                      AALAYA CHANDOLA''', bg=c.primary, fg=c.text)
-        label2.place_configure(relx=0.85, rely=0)
+        label2.place_configure(relx=0.80, rely=0)
+
+
+class DataEntry(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self)
+        self.config(width=UI.winfo_screenwidth(self), height=UI.winfo_screenheight(self), bg=c.primary)
+        self.i = 1
+        self.values = []
+        self.create()
+        self.sub()
+        label1 = tk.Label(text='Product ID', width=40, bg=c.primary, fg=c.text, font=c.font)
+        label2 = tk.Label(text='Quantity', width=40, bg=c.primary, fg=c.text, font=c.font)
+        label1.place(relx=0.23, rely=0.2)
+        label2.place(relx=0.45, rely=0.2)
+
+    def create(self):
+        self.add_button = tk.Button(self, text='Add more?', command=self.add_widget, bg=c.secondary, fg=c.text)
+        self.add_button.place(relx=0.75, rely=0.20)
+
+    def sub(self):
+        self.submit_button = tk.Button(self, text='Submit?', command=self.submit, bg=c.secondary, fg=c.text)
+        self.submit_button.place(relx=0.15, rely=0.2)
+
+    def add_widget(self):
+        globals()['Variable{}'.format(str(self.i))] = tk.Entry(bg=c.secondary, fg=c.text, width=40)
+        globals()['Variable{}'.format(str(self.i))].place(relx=0.28, y=((self.i + 1) * 23)+150)
+        globals()['variable{}'.format(str(self.i))] = tk.Entry(bg=c.secondary, fg=c.text, width=40)
+        globals()['variable{}'.format(str(self.i))].place(relx=0.5, y=((self.i + 1) * 23)+150)
+        globals()['Var{}'.format(str(self.i))] = globals()['Variable{}'.format(str(self.i))].get()
+        globals()['var{}'.format(str(self.i))] = globals()['variable{}'.format(str(self.i))].get()
+        self.i += 1
+
+    def submit(self):
+        for i in range(self.i):
+            self.values.append([globals()['Var{}'.format(str(i))], globals()['var{}'.format(str(i))]])
 
 
 app = UI()
