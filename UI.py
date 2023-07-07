@@ -85,7 +85,7 @@ class Authorization(tk.Frame):
             p = password.get()
             auth = sql_updated.login(username=u, password=p)
             if auth is True:
-                master.switch_frame(DataEntry)
+                master.switch_frame(InventoryEntry)
             else:
                 label.config(text="Authorization Failed. Please try again.")
 
@@ -115,7 +115,7 @@ class TopBar(tk.Frame):
         label2.place_configure(relx=0.80, rely=0)
 
 
-class DataEntry(tk.Frame):
+class InventoryEntry(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self)
         self.config(width=UI.winfo_screenwidth(self), height=UI.winfo_screenheight(self), bg=c.primary)
@@ -123,6 +123,11 @@ class DataEntry(tk.Frame):
         self.values = []
         self.create()
         self.sub()
+        self.warning = tk.Label(text='Enter Product ID and Quantity to add to inventory.', bg=c.primary, fg=c.text, width=70)
+        self.warning.place(rely=0.15, relx=0.305)
+        TopBar().place(y=0)
+        self.add_widget()
+        tk.Label(text="Add to Inventory Page", bg=c.primary, fg=c.text).place(rely=0.1, relx=0.448)
         label1 = tk.Label(text='Product ID', width=40, bg=c.primary, fg=c.text, font=c.font)
         label2 = tk.Label(text='Quantity', width=40, bg=c.primary, fg=c.text, font=c.font)
         label1.place(relx=0.23, rely=0.2)
@@ -130,25 +135,48 @@ class DataEntry(tk.Frame):
 
     def create(self):
         self.add_button = tk.Button(self, text='Add more?', command=self.add_widget, bg=c.secondary, fg=c.text)
-        self.add_button.place(relx=0.75, rely=0.20)
+        self.add_button.place(relx=0.80, rely=0.20)
 
     def sub(self):
         self.submit_button = tk.Button(self, text='Submit?', command=self.submit, bg=c.secondary, fg=c.text)
         self.submit_button.place(relx=0.15, rely=0.2)
 
     def add_widget(self):
-        globals()['Variable{}'.format(str(self.i))] = tk.Entry(bg=c.secondary, fg=c.text, width=40)
-        globals()['Variable{}'.format(str(self.i))].place(relx=0.28, y=((self.i + 1) * 23)+150)
-        globals()['variable{}'.format(str(self.i))] = tk.Entry(bg=c.secondary, fg=c.text, width=40)
-        globals()['variable{}'.format(str(self.i))].place(relx=0.5, y=((self.i + 1) * 23)+150)
-        self.i += 1
+        if self.i < 21:
+            globals()['Variable{}'.format(str(self.i))] = tk.Entry(bg=c.secondary, fg=c.text, width=40)
+            globals()['Variable{}'.format(str(self.i))].place(relx=0.28, y=((self.i + 1) * 23)+150)
+            globals()['variable{}'.format(str(self.i))] = tk.Entry(bg=c.secondary, fg=c.text, width=40)
+            globals()['variable{}'.format(str(self.i))].place(relx=0.5, y=((self.i + 1) * 23)+150)
+            self.i += 1
+        else:
+            self.warning.config(text='Max. number of entries obtained. For more submit again.')
 
     def submit(self):
         for i in range(self.i):
-            globals()['Var{}'.format(str(i))] = globals()['Variable{}'.format(str(i))].get()
-            globals()['var{}'.format(str(i))] = globals()['variable{}'.format(str(i))].get()
-            self.values.append([globals()['Var{}'.format(str(i))], globals()['var{}'.format(str(i))]])
+            try:
+                globals()['Var{}'.format(str(i))] = int(globals()['Variable{}'.format(str(i))].get())
+                globals()['var{}'.format(str(i))] = int(globals()['variable{}'.format(str(i))].get())
+                self.values.append([globals()['Var{}'.format(str(i))], globals()['var{}'.format(str(i))]])
+            except ValueError:
+                self.warning.config(text='Please check your input. Invalid data types entered.')
+                self.values = []
+
+        a = sql_updated.check_data_integrity(self.values)
+        if a is True:
+            sql_updated.update_inventory(self.values)
+            for i in range(len(self.values)):
+                globals()['Variable{}'.format(str(self.i))].destroy()
+                globals()['variable{}'.format(str(self.i))].destroy()
+                self.values = []
+                self.i = 0
+        else:
+            self.warning.config(text="There was a problem with the input. One or more Product ID's do not exist.")
         print(self.values)
+
+
+class ProductEntry(tk.Frame):
+    def __init__(self):
+        tk.Frame.__init__(self)
 
 
 app = UI()

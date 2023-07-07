@@ -57,7 +57,18 @@ def login(username, password):
 def update_inventory(values):
     con = sql.connect(r'{}\x.db'.format(path))
     for i in values:
-        try:
-            pass
-        except:
-            pass
+        con.execute("update Inventory set quantity={} where Product_ID={}".format(i[0], i[1]))
+    con.commit()
+
+
+def check_data_integrity(values):
+    con = sql.connect(r'{}\x.db'.format(path))
+    cur = con.cursor()
+    for i in values:
+        cur.execute('SELECT * FROM Products where Product_ID={}'.format(i[0]))
+        a = cur.fetchall()
+        if len(a) == 0:
+            return False
+        else:
+            continue
+    return True
