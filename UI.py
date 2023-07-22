@@ -3,6 +3,8 @@ import colour_scheme as c
 import ctypes as ct
 import sql_updated
 
+type_options = ('Vegetable', 'Cleaning', 'Entertainment', 'Beverage', 'Pulses', 'Fruit', 'Dairy')
+
 
 def dark_title_bar(window):
     window.update()
@@ -26,7 +28,7 @@ class UI(tk.Tk):
             if self.signed_up is False:
                 self.switch_frame(Start)
             else:
-                self.switch_frame(Authorization)
+                self.switch_frame(Inventory)
 
         logged_in()
         dark_title_bar(self)
@@ -98,7 +100,7 @@ class Welcome(tk.Frame):
         tk.Frame.__init__(self)
         self.config(height=UI.winfo_screenheight(self), width=UI.winfo_screenwidth(self), bg=c.primary)
         TopBar().place(rely=0)
-        a = tk.Label(text='WELCOMEEEE', width=UI.winfo_screenwidth(self)-2000, fg=c.text, bg=c.secondary)
+        a = tk.Label(text='WELCOME', width=UI.winfo_screenwidth(self)-2000, fg=c.text, bg=c.secondary)
         a.place(rely=0.4)
         tk.Button(text="Inventory", command=lambda: master.switch_frame(InventoryEntry)).place(relx=0.5, rely=0.5)
         tk.Button(text="Products", command=lambda: master.switch_frame(ProductEntry)).place(relx=0.5, rely=0.6)
@@ -184,13 +186,15 @@ class ProductEntry(tk.Frame):
         self.i = 0
         self.values = []
         self.create()
+        self.delete()
         self.sub()
-        self.warning = tk.Label(text='Enter Product ID and Quantity to add to inventory.', bg=c.primary, fg=c.text,
+        self.warning = tk.Label(text='Enter products to be added to product list.', bg=c.primary, fg=c.text,
                                 width=70)
         self.warning.place(rely=0.15, relx=0.305)
         TopBar().place(y=0)
         self.add_widget()
-        tk.Label(text="Add to Inventory Page", bg=c.primary, fg=c.text).place(rely=0.1, relx=0.448)
+        tk.Button(text="HomePage", command=lambda: master.switch_frame(Welcome)).place(relx=0.05, rely=0.05)
+        tk.Label(text="Add to Product List", bg=c.primary, fg=c.text).place(rely=0.1, relx=0.448)
         label1 = tk.Label(text='Product Name', width=20, bg=c.primary, fg=c.text, font=c.font2)
         label2 = tk.Label(text='Product Type', width=20, bg=c.primary, fg=c.text, font=c.font2)
         label3 = tk.Label(text='Product Cost', width=20, bg=c.primary, fg=c.text, font=c.font2)
@@ -204,29 +208,49 @@ class ProductEntry(tk.Frame):
         self.add_button = tk.Button(self, text='Add more?', command=self.add_widget, bg=c.secondary, fg=c.text)
         self.add_button.place(relx=0.80, rely=0.20)
 
+    def delete(self):
+        self.delete_button = tk.Button(self, text='Add less?', command=self.remove_widget, bg=c.secondary, fg=c.text)
+        self.delete_button.place(relx=0.80, rely=0.25)
+
     def sub(self):
         self.submit_button = tk.Button(self, text='Submit?', command=self.submit, bg=c.secondary, fg=c.text)
         self.submit_button.place(relx=0.15, rely=0.2)
 
     def add_widget(self):
-        if self.i < 21:
+        if self.i < 17:
             globals()['ProductName{}'.format(str(self.i))] = tk.Entry(bg=c.secondary, fg=c.text, width=20)
-            globals()['ProductName{}'.format(str(self.i))].place(relx=0.28, y=((self.i + 1) * 23) + 150)
-            globals()['ProductType{}'.format(str(self.i))] = tk.Entry(bg=c.secondary, fg=c.text, width=20)
-            globals()['ProductType{}'.format(str(self.i))].place(relx=0.39, y=((self.i + 1) * 23) + 150)
+            globals()['ProductName{}'.format(str(self.i))].place(relx=0.28, y=((self.i + 1) * 28) + 150)
+            globals()['ProductTypeVar{}'.format(str(self.i))] = tk.StringVar()
+            globals()['ProductTypeVar{}'.format(str(self.i))].set("Food")
+            globals()['ProductType{}'.format(str(self.i))] = tk.OptionMenu(self.master,
+                                                                           globals()['ProductTypeVar{}'.format(str(self.i))],
+                                                                           *type_options)
+            globals()['ProductType{}'.format(str(self.i))].config(width=12, height=0, bg=c.secondary, fg=c.text,
+                                                                  font=c.font2)
+            globals()['ProductType{}'.format(str(self.i))].place(relx=0.39, y=((self.i + 1) * 28) + 150)
             globals()['ProductCost{}'.format(str(self.i))] = tk.Entry(bg=c.secondary, fg=c.text, width=20)
-            globals()['ProductCost{}'.format(str(self.i))].place(relx=0.50, y=((self.i + 1) * 23) + 150)
+            globals()['ProductCost{}'.format(str(self.i))].place(relx=0.50, y=((self.i + 1) * 28) + 150)
             globals()['ProductSellingPrice{}'.format(str(self.i))] = tk.Entry(bg=c.secondary, fg=c.text, width=20)
-            globals()['ProductSellingPrice{}'.format(str(self.i))].place(relx=0.61, y=((self.i + 1) * 23) + 150)
+            globals()['ProductSellingPrice{}'.format(str(self.i))].place(relx=0.61, y=((self.i + 1) * 28) + 150)
             self.i += 1
         else:
             self.warning.config(text='Max. number of entries obtained. For more submit again.')
+
+    def remove_widget(self):
+        if self.i > 1:
+            globals()['ProductName{}'.format(str(self.i-1))].destroy()
+            globals()['ProductType{}'.format(str(self.i-1))].destroy()
+            globals()['ProductCost{}'.format(str(self.i-1))].destroy()
+            globals()['ProductSellingPrice{}'.format(str(self.i-1))].destroy()
+            self.i -= 1
+        else:
+            pass
 
     def submit(self):
         for i in range(self.i):
             try:
                 globals()['Name{}'.format(str(i))] = str(globals()['ProductName{}'.format(str(i))].get())
-                globals()['Type{}'.format(str(i))] = str(globals()['ProductType{}'.format(str(i))].get())
+                globals()['Type{}'.format(str(i))] = str(globals()['ProductTypeVar{}'.format(str(i))].get())
                 globals()['Cost{}'.format(str(i))] = int(globals()['ProductCost{}'.format(str(i))].get())
                 globals()['SellingPrice{}'.format(str(i))] = int(globals()['ProductSellingPrice{}'.format(str(i))].get()
                                                                  )
@@ -249,6 +273,65 @@ class ProductEntry(tk.Frame):
                 self.add_widget()
         else:
             self.warning.config(text="There was a problem with the input. One or more of the Products already exist.")
+
+
+class DisplayField(tk.Entry):
+    def __init__(self, width):
+        tk.Entry.__init__(self)
+        self.width = width
+        self['width'] = self.width
+        self.config(font=c.font, disabledforeground=c.text, disabledbackground=c.secondary,
+                    selectforeground='black', selectbackground='red', justify='center', highlightthickness=2,
+                    highlightbackground=c.tertiary, highlightcolor=c.tertiary)
+
+
+class Inventory(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self)
+        self.config(width=UI.winfo_screenwidth(self), height=UI.winfo_screenheight(self), bg=c.primary)
+        self.values = sql_updated.display_inventory()
+        self.number = 0
+        self.number2 = 21
+        if len(self.values) < 21:
+            self.number2 = len(self.values)
+        else:
+            self.number2 = 21
+        TopBar().place(y=0)
+        self.display()
+        self.next_b()
+
+    def display(self):
+        for j in range(self.number, self.number2):
+            globals()['Product_ID{}'.format(self.number)] = DisplayField(width=5)
+            globals()['Product_Name{}'.format(self.number)] = DisplayField(width=30)
+            globals()['Quantity{}'.format(self.number)] = DisplayField(width=7)
+            globals()['Product_ID{}'.format(self.number)].place(relx=0.315, y=((j + 1) * 24)+150)
+            globals()['Product_Name{}'.format(self.number)].place(relx=0.356, y=((j + 1)*24)+150)
+            globals()['Quantity{}'.format(self.number)].place(relx=0.603, y=((j + 1)*24)+150)
+            globals()['Product_ID{}'.format(self.number)].insert(0, str(self.values[j][0]))
+            globals()['Product_Name{}'.format(self.number)].insert(0, str(self.values[j][1]))
+            globals()['Quantity{}'.format(self.number)].insert(0, str(self.values[j][2]))
+            globals()['Product_ID{}'.format(self.number)].config(state='disabled')
+            globals()['Product_Name{}'.format(self.number)].config(state='disabled')
+            globals()['Quantity{}'.format(self.number)].config(state='disabled')
+
+    def next_b(self):
+        self.next_button = tk.Button(self, text='Next Page', command=self.next, bg=c.secondary, fg=c.text)
+        self.next_button.place(relx=0.80, rely=0.25)
+
+    def next(self):
+        if len(self.values) > 21:
+            for j in range(self.number, self.number2):
+                globals()['Product_ID{}'.format(self.number)].destroy()
+                globals()['Product_Name{}'.format(self.number)].destroy()
+                globals()['Quantity{}'.format(self.number)].destroy()
+            self.number = self.number2
+            if len(self.values) > (self.number2 + 21):
+                self.number2 += 21
+            else:
+                self.number2 = len(self.values)
+        else:
+            pass
 
 
 app = UI()
