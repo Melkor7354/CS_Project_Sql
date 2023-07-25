@@ -176,7 +176,6 @@ class InventoryEntry(tk.Frame):
                 self.i = 0
         else:
             self.warning.config(text="There was a problem with the input. One or more Product ID's do not exist.")
-        print(self.values)
 
 
 class ProductEntry(tk.Frame):
@@ -299,21 +298,22 @@ class Inventory(tk.Frame):
         TopBar().place(y=0)
         self.display()
         self.next_b()
+        self.search_b()
 
     def display(self):
         for j in range(self.number, self.number2):
-            globals()['Product_ID{}'.format(self.number)] = DisplayField(width=5)
-            globals()['Product_Name{}'.format(self.number)] = DisplayField(width=30)
-            globals()['Quantity{}'.format(self.number)] = DisplayField(width=7)
-            globals()['Product_ID{}'.format(self.number)].place(relx=0.315, y=((j + 1) * 24)+150)
-            globals()['Product_Name{}'.format(self.number)].place(relx=0.356, y=((j + 1)*24)+150)
-            globals()['Quantity{}'.format(self.number)].place(relx=0.603, y=((j + 1)*24)+150)
-            globals()['Product_ID{}'.format(self.number)].insert(0, str(self.values[j][0]))
-            globals()['Product_Name{}'.format(self.number)].insert(0, str(self.values[j][1]))
-            globals()['Quantity{}'.format(self.number)].insert(0, str(self.values[j][2]))
-            globals()['Product_ID{}'.format(self.number)].config(state='disabled')
-            globals()['Product_Name{}'.format(self.number)].config(state='disabled')
-            globals()['Quantity{}'.format(self.number)].config(state='disabled')
+            globals()['Product_ID{}'.format(j)] = DisplayField(width=5)
+            globals()['Product_Name{}'.format(j)] = DisplayField(width=30)
+            globals()['Quantity{}'.format(j)] = DisplayField(width=7)
+            globals()['Product_ID{}'.format(j)].place(relx=0.315, y=((j + 1) * 24)+150)
+            globals()['Product_Name{}'.format(j)].place(relx=0.356, y=((j + 1)*24)+150)
+            globals()['Quantity{}'.format(j)].place(relx=0.603, y=((j + 1)*24)+150)
+            globals()['Product_ID{}'.format(j)].insert(0, str(self.values[j][0]))
+            globals()['Product_Name{}'.format(j)].insert(0, str(self.values[j][1]))
+            globals()['Quantity{}'.format(j)].insert(0, str(self.values[j][2]))
+            globals()['Product_ID{}'.format(j)].config(state='disabled')
+            globals()['Product_Name{}'.format(j)].config(state='disabled')
+            globals()['Quantity{}'.format(j)].config(state='disabled')
 
     def next_b(self):
         self.next_button = tk.Button(self, text='Next Page', command=self.next, bg=c.secondary, fg=c.text)
@@ -332,6 +332,25 @@ class Inventory(tk.Frame):
                 self.number2 = len(self.values)
         else:
             pass
+
+    def search_b(self):
+        def search():
+            val = sql_updated.search(a.get())
+            for j in range(self.number, self.number2):
+                globals()['Product_ID{}'.format(j)].destroy()
+                globals()['Product_Name{}'.format(j)].destroy()
+                globals()['Quantity{}'.format(j)].destroy()
+            self.values = val
+            if len(self.values) < 21:
+                self.number2 = len(self.values)
+            else:
+                self.number2 = 21
+            self.display()
+
+        a = tk.Entry(bg='red', fg='white', width=15)
+        a.place(relx=0.7, rely=0.2)
+        b = tk.Button(bg='red', fg='white', text='Submit', command=search)
+        b.place(relx=0.8, rely=0.2)
 
 
 app = UI()

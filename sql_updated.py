@@ -104,5 +104,6 @@ def display_inventory():
     return cur.fetchall()
 
 
-cur.execute("SELECT * FROM Products")
-print(cur.fetchall())
+def search(value):
+    cur.execute("SELECT * FROM Inventory where product_name like '%{}%'".format(value.title()))
+    return cur.fetchall()
