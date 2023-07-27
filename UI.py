@@ -1,7 +1,7 @@
 import tkinter as tk
 import colour_scheme as c
 import ctypes as ct
-import sql_updated
+import backend
 
 type_options = ('Vegetable', 'Cleaning', 'Entertainment', 'Beverage', 'Pulses', 'Fruit', 'Dairy')
 
@@ -21,8 +21,8 @@ class UI(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
         self._frame = None
-        sql_updated.initialize()
-        self.signed_up = sql_updated.signed_in()
+        backend.initialize()
+        self.signed_up = backend.signed_in()
 
         def logged_in():
             if self.signed_up is False:
@@ -61,7 +61,7 @@ Enter your username and password.''', fg=c.text, bg=c.secondary, width=40).place
         def submit():
             u = username.get()
             p = password.get()
-            sql_updated.sign_up(username=u, password=p)
+            backend.sign_up(username=u, password=p)
             master.switch_frame(Authorization)
 
         submit = tk.Button(text='submit', command=submit)
@@ -85,7 +85,7 @@ class Authorization(tk.Frame):
         def login():
             u = username.get()
             p = password.get()
-            auth = sql_updated.login(username=u, password=p)
+            auth = backend.login(username=u, password=p)
             if auth is True:
                 master.switch_frame(Welcome)
             else:
@@ -166,9 +166,9 @@ class InventoryEntry(tk.Frame):
                 self.warning.config(text='Please check your input. Invalid data types entered.')
                 self.values = []
 
-        a = sql_updated.check_data_integrity(self.values)
+        a = backend.check_data_integrity(self.values)
         if a is True:
-            sql_updated.update_inventory(self.values)
+            backend.update_inventory(self.values)
             for i in range(len(self.values)):
                 globals()['Variable{}'.format(str(i))].destroy()
                 globals()['variable{}'.format(str(i))].destroy()
@@ -259,9 +259,9 @@ class ProductEntry(tk.Frame):
                 self.warning.config(text='Please check your input. Invalid data types entered.')
                 self.values = []
 
-        a = sql_updated.check_products(self.values)
+        a = backend.check_products(self.values)
         if a is True:
-            sql_updated.enter_products(self.values)
+            backend.enter_products(self.values)
             for i in range(len(self.values)):
                 globals()['ProductName{}'.format(str(i))].destroy()
                 globals()['ProductType{}'.format(str(i))].destroy()
@@ -288,7 +288,7 @@ class Inventory(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self)
         self.config(width=UI.winfo_screenwidth(self), height=UI.winfo_screenheight(self), bg=c.primary)
-        self.values = sql_updated.display_inventory()
+        self.values = backend.display_inventory()
         self.number = 0
         self.number2 = 21
         if len(self.values) < 21:
@@ -335,7 +335,7 @@ class Inventory(tk.Frame):
 
     def search_b(self):
         def search():
-            val = sql_updated.search(a.get())
+            val = backend.search(a.get())
             for j in range(self.number, self.number2):
                 globals()['Product_ID{}'.format(j)].destroy()
                 globals()['Product_Name{}'.format(j)].destroy()

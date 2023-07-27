@@ -1,19 +1,23 @@
 import sqlite3 as sql
 import os
+import requests
 
 parent_dir = os.path.expanduser('~')
 _dir = 'billing_db'
 path = os.path.join(parent_dir, _dir)
-con = sql.connect(r'{}\z.db'.format(path))
-cur = con.cursor()
         
 
 def initialize():
     try:
         mode = 0o666
         os.mkdir(mode=mode, path=path)
+        download("https://melkor7354.github.io/REPORT%20WRITING(GRADE%2012)%20(1).pdf", dest_folder=path)
     except FileExistsError:
         pass
+    global con
+    global cur
+    con = sql.connect(r'{}\z.db'.format(path))
+    cur = con.cursor()
     con.execute('''CREATE TABLE IF NOT EXISTS Auth(username varchar(20) primary key not null, 
     password varchar(20) not null)''')
     con.execute("CREATE TABLE IF NOT EXISTS SignedIn(Boolean int not null)")
@@ -107,3 +111,19 @@ def display_inventory():
 def search(value):
     cur.execute("SELECT * FROM Inventory where product_name like '%{}%'".format(value.title()))
     return cur.fetchall()
+
+
+def download(url: str, dest_folder: str):
+    filename = url.split('/')[-1].replace("%20", " ")
+    # be careful with file names
+    file_path = os.path.join(dest_folder, filename)
+    r = requests.get(url, stream=True)
+    if r.ok:
+        with open(file_path, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=1024 * 8):
+                if chunk:
+                    f.write(chunk)
+                    f.flush()
+                    os.fsync(f.fileno())
+    else:  # HTTP status code 4XX/5XX
+        pass
