@@ -149,7 +149,7 @@ def create_bill(customer_name, data):
     s = 0
     for Product_ID, Product, Quant, Price in data:
         row = table.add_row().cells
-        row[0].text = Product_ID
+        row[0].text = str(Product_ID)
         row[1].text = Product
         row[2].text = str(Quant)
         row[3].text = str(Price)
@@ -158,10 +158,11 @@ def create_bill(customer_name, data):
     row2 = table.add_row().cells
     for i in range(4):
         row2[i].text = ''
-    row2[4].text = 'Net + 18% GST = ' + str(s+(0.18*s)//1)
+    row2[3].text = 'Net+18% GST ='
+    row2[4].text = str(1.18*s)
     table.style = "Light Shading Accent 1"
-    doc.save(r"{}\{}-{}-{}.docx".format(path2, customer_name, date, time))
-    os.startfile(r"{}\{}-{}-{}.docx".format(path2, customer_name, date, time), "open")
+    doc.save(r"{}\{}-{}-{}.docx".format(path2, customer_name.replace(" ", "_"), date, time))
+    os.startfile(r"{}\{}-{}-{}.docx".format(path2, customer_name.replace(' ', '_'), date, time), "open")
 
 
 def fetch_data(values):
@@ -170,4 +171,9 @@ def fetch_data(values):
         cur.execute("SELECT Product_Name, Selling_Price from Products where Product_ID={}".format(i))
         val = cur.fetchall()
         data.append(val)
+
+
+data1 = ((1, 'Carrot', 2, 43), (2, 'Rice', 3, 55), (7, 'Tomato', 2, 150))
+customer_name1 = 'Eklavya Raman'
+create_bill(data=data1, customer_name=customer_name1)
 
