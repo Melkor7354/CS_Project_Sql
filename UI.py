@@ -1,20 +1,8 @@
 import tkinter as tk
 import colour_scheme as c
-import ctypes as ct
 import backend
 
 type_options = ('Vegetable', 'Cleaning', 'Entertainment', 'Beverage', 'Pulses', 'Fruit', 'Dairy')
-
-
-def dark_title_bar(window):
-    window.update()
-    set_window_attribute = ct.windll.dwmapi.DwmSetWindowAttribute
-    get_parent = ct.windll.user32.GetParent
-    hwnd = get_parent(window.winfo_id())
-    value = 2
-    value = ct.c_int(value)
-    set_window_attribute(hwnd, 20, ct.byref(value),
-                         4)
 
 
 class UI(tk.Tk):
@@ -31,7 +19,7 @@ class UI(tk.Tk):
                 self.switch_frame(Inventory)
 
         logged_in()
-        dark_title_bar(self)
+        backend.dark_title_bar(self)
         self.minsize(self.winfo_screenwidth()-300, self.winfo_screenheight()-200)
         self.maxsize(self.winfo_screenwidth()-300, self.winfo_screenheight()-200)
 

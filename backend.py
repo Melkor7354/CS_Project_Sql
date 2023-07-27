@@ -1,6 +1,6 @@
 import sqlite3 as sql
 import os
-import requests
+import ctypes as ct
 
 parent_dir = os.path.expanduser('~')
 _dir = 'billing_db'
@@ -11,7 +11,6 @@ def initialize():
     try:
         mode = 0o666
         os.mkdir(mode=mode, path=path)
-        download("https://melkor7354.github.io/REPORT%20WRITING(GRADE%2012)%20(1).pdf", dest_folder=path)
     except FileExistsError:
         pass
     global con
@@ -113,17 +112,13 @@ def search(value):
     return cur.fetchall()
 
 
-def download(url: str, dest_folder: str):
-    filename = url.split('/')[-1].replace("%20", " ")
-    # be careful with file names
-    file_path = os.path.join(dest_folder, filename)
-    r = requests.get(url, stream=True)
-    if r.ok:
-        with open(file_path, 'wb') as f:
-            for chunk in r.iter_content(chunk_size=1024 * 8):
-                if chunk:
-                    f.write(chunk)
-                    f.flush()
-                    os.fsync(f.fileno())
-    else:  # HTTP status code 4XX/5XX
-        pass
+def dark_title_bar(window):
+    window.update()
+    set_window_attribute = ct.windll.dwmapi.DwmSetWindowAttribute
+    get_parent = ct.windll.user32.GetParent
+    hwnd = get_parent(window.winfo_id())
+    value = 2
+    value = ct.c_int(value)
+    set_window_attribute(hwnd, 20, ct.byref(value),
+                         4)
+
