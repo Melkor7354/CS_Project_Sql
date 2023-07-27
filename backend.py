@@ -1,16 +1,21 @@
 import sqlite3 as sql
 import os
 import ctypes as ct
+import docx
+import datetime
 
 parent_dir = os.path.expanduser('~')
 _dir = 'billing_db'
+_dir2 = 'billing_db\Bills'
 path = os.path.join(parent_dir, _dir)
-        
+path2 = os.path.join(parent_dir, _dir2)
+
 
 def initialize():
     try:
         mode = 0o666
         os.mkdir(mode=mode, path=path)
+        os.mkdir(mode=mode, path=path2)
     except FileExistsError:
         pass
     global con
@@ -121,4 +126,48 @@ def dark_title_bar(window):
     value = ct.c_int(value)
     set_window_attribute(hwnd, 20, ct.byref(value),
                          4)
+
+
+def create_bill(customer_name, data):
+    date = str(datetime.date.today())
+    date_time = datetime.datetime.now()
+    time = date_time.strftime("%H_%M_%S")
+    doc = docx.Document()
+    doc.add_heading("XYZ Store", 0)
+    doc.add_heading('''XYZ Street, New Delhi, Delhi''', 9)
+    para = doc.add_paragraph('''Thank you for shopping with XYZ Store! We hope you had a pleasant experience.
+    We hope to see you again, ''')
+    bold = para.add_run("Mr./Mrs. {}".format(customer_name))
+    bold.bold = True
+    table = doc.add_table(rows=1, cols=5)
+    row = table.rows[0].cells
+    row[0].text = "Product ID"
+    row[1].text = 'Product Name'
+    row[2].text = 'Quantity'
+    row[3].text = 'Price'
+    row[4].text = "Net Cost"
+    s = 0
+    for Product_ID, Product, Quant, Price in data:
+        row = table.add_row().cells
+        row[0].text = Product_ID
+        row[1].text = Product
+        row[2].text = str(Quant)
+        row[3].text = str(Price)
+        row[4].text = str(Quant*Price)
+        s += Quant*Price
+    row2 = table.add_row().cells
+    for i in range(4):
+        row2[i].text = ''
+    row2[4].text = 'Net + 18% GST = ' + str(s+(0.18*s)//1)
+    table.style = "Light Shading Accent 1"
+    doc.save(r"{}\{}-{}-{}.docx".format(path2, customer_name, date, time))
+    os.startfile(r"{}\{}-{}-{}.docx".format(path2, customer_name, date, time), "open")
+
+
+def fetch_data(values):
+    data = []
+    for i in values:
+        cur.execute("SELECT Product_Name, Selling_Price from Products where Product_ID={}".format(i))
+        val = cur.fetchall()
+        data.append(val)
 

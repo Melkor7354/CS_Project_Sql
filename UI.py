@@ -1,7 +1,6 @@
 import tkinter as tk
 import colour_scheme as c
 import backend
-
 type_options = ('Vegetable', 'Cleaning', 'Entertainment', 'Beverage', 'Pulses', 'Fruit', 'Dairy')
 
 
@@ -339,6 +338,15 @@ class Inventory(tk.Frame):
         a.place(relx=0.7, rely=0.2)
         b = tk.Button(bg='red', fg='white', text='Submit', command=search)
         b.place(relx=0.8, rely=0.2)
+
+
+class Billing(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self)
+        self.config(width=UI.winfo_screenwidth(self), height=UI.winfo_screenheight(self), bg=c.primary)
+        TopBar().place(y=0)
+
+
 
 
 app = UI()
