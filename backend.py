@@ -128,17 +128,13 @@ def dark_title_bar(window):
                          4)
 
 
-def create_bill(customer_name, data):
+def create_bill(customer_name, data, discount=0):
     date = str(datetime.date.today())
     date_time = datetime.datetime.now()
     time = date_time.strftime("%H_%M_%S")
     doc = docx.Document()
     doc.add_heading("XYZ Store", 0)
     doc.add_heading('''XYZ Street, New Delhi, Delhi''', 9)
-    para = doc.add_paragraph('''Thank you for shopping with XYZ Store! We hope you had a pleasant experience.
-    We hope to see you again, ''')
-    bold = para.add_run("Mr./Mrs. {}".format(customer_name))
-    bold.bold = True
     table = doc.add_table(rows=1, cols=5)
     row = table.rows[0].cells
     row[0].text = "Product ID"
@@ -158,9 +154,13 @@ def create_bill(customer_name, data):
     row2 = table.add_row().cells
     for i in range(4):
         row2[i].text = ''
-    row2[3].text = 'Net+18% GST ='
-    row2[4].text = str(1.18*s)
+    row2[3].text = 'Net+18% GST - Discount ='
+    row2[4].text = str((1.18*s)*((100-discount)/100))
     table.style = "Light Shading Accent 1"
+    para = doc.add_paragraph('''Thank you for shopping with XYZ Store! We hope you had a pleasant experience.
+    We hope to see you again, ''')
+    bold = para.add_run("Mr./Mrs. {}".format(customer_name))
+    bold.bold = True
     doc.save(r"{}\{}-{}-{}.docx".format(path2, customer_name.replace(" ", "_"), date, time))
     os.startfile(r"{}\{}-{}-{}.docx".format(path2, customer_name.replace(' ', '_'), date, time), "open")
 
@@ -171,9 +171,3 @@ def fetch_data(values):
         cur.execute("SELECT Product_Name, Selling_Price from Products where Product_ID={}".format(i))
         val = cur.fetchall()
         data.append(val)
-
-
-data1 = ((1, 'Carrot', 2, 43), (2, 'Rice', 3, 55), (7, 'Tomato', 2, 150))
-customer_name1 = 'Eklavya Raman'
-create_bill(data=data1, customer_name=customer_name1)
-

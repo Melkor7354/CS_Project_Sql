@@ -15,7 +15,7 @@ class UI(tk.Tk):
             if self.signed_up is False:
                 self.switch_frame(Start)
             else:
-                self.switch_frame(Inventory)
+                self.switch_frame(Billing)
 
         logged_in()
         backend.dark_title_bar(self)
@@ -345,8 +345,74 @@ class Billing(tk.Frame):
         tk.Frame.__init__(self)
         self.config(width=UI.winfo_screenwidth(self), height=UI.winfo_screenheight(self), bg=c.primary)
         TopBar().place(y=0)
+        self.values = backend.display_inventory()
+        self.number = 0
+        self.number2 = 21
+        self.i = 0
+        if len(self.values) < 21:
+            self.number2 = len(self.values)
+        else:
+            self.number2 = 21
+        self.display()
+        self.search_b()
+        self.customer_name = tk.Entry(bg=c.secondary, fg=c.text, width=25)
+        self.discount = tk.Entry(bg=c.secondary, fg=c.text, width=10)
+        self.customer_name.place(relx=0.2, y=120)
+        self.discount.place(relx=0.4, y=120)
+        self.add_widget()
+        self.create()
 
+    def display(self):
+        for j in range(self.number, self.number2):
+            globals()['Product_ID{}'.format(j)] = DisplayField(width=5)
+            globals()['Product_Name{}'.format(j)] = DisplayField(width=30)
+            globals()['Product_ID{}'.format(j)].place(relx=0.715, y=((j + 1) * 24) + 150)
+            globals()['Product_Name{}'.format(j)].place(relx=0.756, y=((j + 1) * 24) + 150)
+            globals()['Product_ID{}'.format(j)].insert(0, str(self.values[j][0]))
+            globals()['Product_Name{}'.format(j)].insert(0, str(self.values[j][1]))
+            globals()['Product_ID{}'.format(j)].config(state='disabled')
+            globals()['Product_Name{}'.format(j)].config(state='disabled')
 
+    def search_b(self):
+        def search():
+            val = backend.search(a.get())
+            for j in range(self.number, self.number2):
+                globals()['Product_ID{}'.format(j)].destroy()
+                globals()['Product_Name{}'.format(j)].destroy()
+                globals()['Quantity{}'.format(j)].destroy()
+            self.values = val
+            if len(self.values) < 21:
+                self.number2 = len(self.values)
+            else:
+                self.number2 = 21
+            self.display()
+
+        a = tk.Entry(bg='red', fg='white', width=15)
+        a.place(relx=0.7, rely=0.2)
+        b = tk.Button(bg='red', fg='white', text='Submit', command=search)
+        b.place(relx=0.8, rely=0.2)
+
+    def create(self):
+        self.add_button = tk.Button(self, text='Add more?', command=self.add_widget, bg=c.secondary, fg=c.text)
+        self.add_button.place(relx=0.5, y=120)
+
+    def add_widget(self):
+        if self.i < 21:
+            globals()['ProductId{}'.format(self.i)] = tk.Entry(bg=c.secondary, fg=c.text, width=10)
+            globals()['Quantity{}'.format(self.i)] = tk.Entry(bg=c.secondary, fg=c.text, width=10)
+            globals()['Product_Name{}'.format(self.i)] = tk.Entry(bg=c.secondary, fg=c.text,
+                                                                  disabledbackground=c.secondary,
+                                                                  disabledforeground=c.text, width=15)
+            globals()['SellingPrice{}'.format(self.i)] = tk.Entry(bg=c.secondary, fg=c.text,
+                                                                  disabledbackground=c.secondary,
+                                                                  disabledforeground=c.text, width=15)
+            globals()['ProductId{}'.format(self.i)].place(relx=0.2, y=((self.i + 1) * 23)+150)
+            globals()['Quantity{}'.format(self.i)].place(relx=0.3, y=((self.i + 1) * 23)+150)
+            globals()['Product_Name{}'.format(self.i)].place(relx=0.4, y=((self.i + 1) * 23)+150)
+            globals()['SellingPrice{}'.format(self.i)].place(relx=0.5, y=((self.i + 1) * 23)+150)
+            self.i += 1
+        else:
+            pass
 
 
 app = UI()
