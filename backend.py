@@ -128,7 +128,7 @@ def dark_title_bar(window):
                          4)
 
 
-def create_bill(customer_name, data, discount=0):
+def create_bill(data, customer_name="Customer", discount=0):
     date = str(datetime.date.today())
     date_time = datetime.datetime.now()
     time = date_time.strftime("%H_%M_%S")
@@ -143,10 +143,10 @@ def create_bill(customer_name, data, discount=0):
     row[3].text = 'Price'
     row[4].text = "Net Cost"
     s = 0
-    for Product_ID, Product, Quant, Price in data:
+    for Product_ID, Quant, Product, Price in data:
         row = table.add_row().cells
         row[0].text = str(Product_ID)
-        row[1].text = Product
+        row[1].text = str(Product)
         row[2].text = str(Quant)
         row[3].text = str(Price)
         row[4].text = str(Quant*Price)
@@ -165,9 +165,13 @@ def create_bill(customer_name, data, discount=0):
     os.startfile(r"{}\{}-{}-{}.docx".format(path2, customer_name.replace(' ', '_'), date, time), "open")
 
 
-def fetch_data(values):
-    data = []
-    for i in values:
-        cur.execute("SELECT Product_Name, Selling_Price from Products where Product_ID={}".format(i))
-        val = cur.fetchall()
-        data.append(val)
+def fetch_data(value):
+    cur.execute("SELECT Product_Name, Selling_Price from Products where Product_ID={}".format(value))
+    val = cur.fetchall()
+    return val
+
+
+def reduce_inventory(data):
+    for i in data:
+        con.execute("update Inventory set quantity = quantity + {} where Product_ID={}".format(i[0], i[1]))
+    con.commit()

@@ -161,6 +161,7 @@ class InventoryEntry(tk.Frame):
                 globals()['variable{}'.format(str(i))].destroy()
                 self.values = []
                 self.i = 0
+            self.add_widget()
         else:
             self.warning.config(text="There was a problem with the input. One or more Product ID's do not exist.")
 
@@ -353,33 +354,49 @@ class Billing(tk.Frame):
             self.number2 = len(self.values)
         else:
             self.number2 = 21
+        self.warning = tk.Label(text='Enter Product ID for billing.', bg=c.primary, fg=c.text,
+                                width=70)
+        self.warning.place(rely=0.08, relx=0.305)
         self.display()
         self.search_b()
         self.customer_name = tk.Entry(bg=c.secondary, fg=c.text, width=25)
+        self.lab1 = tk.Label(text="Customer Name: ", bg=c.primary, fg=c.text)
         self.discount = tk.Entry(bg=c.secondary, fg=c.text, width=10)
-        self.customer_name.place(relx=0.2, y=120)
-        self.discount.place(relx=0.4, y=120)
+        self.lab2 = tk.Label(text="Discount: ", bg=c.primary, fg=c.text)
+        self.customer_name.place(relx=0.1, y=115)
+        self.lab1.place(relx=0.1, y=90)
+        self.discount.place(relx=0.3, y=115)
+        self.lab2.place(relx=0.3, y=90)
+        self.prod_ID = tk.Label(text="Prod. ID: ", bg=c.primary, fg=c.text)
+        self.quant = tk.Label(text="Quantity: ", bg=c.primary, fg=c.text)
+        self.prod_Name = tk.Label(text="Prod. Name: ", bg=c.primary, fg=c.text)
+        self.selling_price = tk.Label(text="Selling Price: ", bg=c.primary, fg=c.text)
+        self.prod_ID.place(relx=0.1, y=145)
+        self.quant.place(relx=0.2, y=145)
+        self.prod_Name.place(relx=0.3, y=145)
+        self.selling_price.place(relx=0.42, y=145)
         self.add_widget()
         self.create()
+        self.confirm_b()
+        self.submit_b()
 
     def display(self):
         for j in range(self.number, self.number2):
-            globals()['Product_ID{}'.format(j)] = DisplayField(width=5)
-            globals()['Product_Name{}'.format(j)] = DisplayField(width=30)
-            globals()['Product_ID{}'.format(j)].place(relx=0.715, y=((j + 1) * 24) + 150)
-            globals()['Product_Name{}'.format(j)].place(relx=0.756, y=((j + 1) * 24) + 150)
-            globals()['Product_ID{}'.format(j)].insert(0, str(self.values[j][0]))
-            globals()['Product_Name{}'.format(j)].insert(0, str(self.values[j][1]))
-            globals()['Product_ID{}'.format(j)].config(state='disabled')
-            globals()['Product_Name{}'.format(j)].config(state='disabled')
+            globals()['Product_ID1{}'.format(j)] = DisplayField(width=5)
+            globals()['Product_Name1{}'.format(j)] = DisplayField(width=30)
+            globals()['Product_ID1{}'.format(j)].place(relx=0.615, y=((j + 1) * 24) + 150)
+            globals()['Product_Name1{}'.format(j)].place(relx=0.656, y=((j + 1) * 24) + 150)
+            globals()['Product_ID1{}'.format(j)].insert(0, str(self.values[j][0]))
+            globals()['Product_Name1{}'.format(j)].insert(0, str(self.values[j][1]))
+            globals()['Product_ID1{}'.format(j)].config(state='disabled')
+            globals()['Product_Name1{}'.format(j)].config(state='disabled')
 
     def search_b(self):
         def search():
             val = backend.search(a.get())
             for j in range(self.number, self.number2):
-                globals()['Product_ID{}'.format(j)].destroy()
-                globals()['Product_Name{}'.format(j)].destroy()
-                globals()['Quantity{}'.format(j)].destroy()
+                globals()['Product_ID1{}'.format(j)].destroy()
+                globals()['Product_Name1{}'.format(j)].destroy()
             self.values = val
             if len(self.values) < 21:
                 self.number2 = len(self.values)
@@ -392,27 +409,64 @@ class Billing(tk.Frame):
         b = tk.Button(bg='red', fg='white', text='Submit', command=search)
         b.place(relx=0.8, rely=0.2)
 
+    def confirm_b(self):
+        def confirm():
+            s = 0
+            for i in range(self.i):
+                data = backend.fetch_data(globals()['ProductId{}'.format(i)].get())
+                globals()['Product_Name{}'.format(i)].insert(0, str(data[0][0]))
+                globals()['SellingPrice{}'.format(i)].insert(0, str(data[0][1]))
+                globals()['Product_Name{}'.format(i)].config(state='disabled')
+                globals()['SellingPrice{}'.format(i)].config(state='disabled')
+                a = globals()['Quantity{}'.format(i)].get()
+                s += int(a)*(int(data[0][1]))
+            b = int(self.discount.get())
+            if b == '' or b is None:
+                b = 0
+            payable = (s*1.18)*((100-b)/100)
+            self.warning.config(text="Net Payable Amount: {}".format(payable))
+
+        self.confirm_button = tk.Button(self, text="Confirm Bill?", command=confirm, bg=c.secondary, fg=c.text)
+        self.confirm_button.place(relx=0.38, y=115)
+
     def create(self):
         self.add_button = tk.Button(self, text='Add more?', command=self.add_widget, bg=c.secondary, fg=c.text)
-        self.add_button.place(relx=0.5, y=120)
+        self.add_button.place(relx=0.465, y=115)
 
     def add_widget(self):
         if self.i < 21:
-            globals()['ProductId{}'.format(self.i)] = tk.Entry(bg=c.secondary, fg=c.text, width=10)
-            globals()['Quantity{}'.format(self.i)] = tk.Entry(bg=c.secondary, fg=c.text, width=10)
+            globals()['ProductId{}'.format(self.i)] = tk.Entry(bg=c.secondary, fg=c.text, width=15)
+            globals()['Quantity{}'.format(self.i)] = tk.Entry(bg=c.secondary, fg=c.text, width=15)
             globals()['Product_Name{}'.format(self.i)] = tk.Entry(bg=c.secondary, fg=c.text,
                                                                   disabledbackground=c.secondary,
-                                                                  disabledforeground=c.text, width=15)
+                                                                  disabledforeground=c.text, width=20)
             globals()['SellingPrice{}'.format(self.i)] = tk.Entry(bg=c.secondary, fg=c.text,
                                                                   disabledbackground=c.secondary,
-                                                                  disabledforeground=c.text, width=15)
-            globals()['ProductId{}'.format(self.i)].place(relx=0.2, y=((self.i + 1) * 23)+150)
-            globals()['Quantity{}'.format(self.i)].place(relx=0.3, y=((self.i + 1) * 23)+150)
-            globals()['Product_Name{}'.format(self.i)].place(relx=0.4, y=((self.i + 1) * 23)+150)
-            globals()['SellingPrice{}'.format(self.i)].place(relx=0.5, y=((self.i + 1) * 23)+150)
+                                                                  disabledforeground=c.text, width=20)
+            globals()['ProductId{}'.format(self.i)].place(relx=0.1, y=((self.i + 1) * 23)+150)
+            globals()['Quantity{}'.format(self.i)].place(relx=0.2, y=((self.i + 1) * 23)+150)
+            globals()['Product_Name{}'.format(self.i)].place(relx=0.3, y=((self.i + 1) * 23)+150)
+            globals()['SellingPrice{}'.format(self.i)].place(relx=0.42, y=((self.i + 1) * 23)+150)
             self.i += 1
         else:
-            pass
+            self.warning.config(text='Too many items added. Add more in second bill.')
+
+    def submit_b(self):
+        self.submit_button = tk.Button(fg=c.text, bg=c.secondary, command=self.submit, text="Create Bill?")
+        self.submit_button.place(relx=0.54, y=115)
+
+    def submit(self):
+        customer_name = self.customer_name.get()
+        discount = int(self.discount.get())
+        data = []
+        for i in range(self.i):
+            prod_id = (globals()['ProductId{}'.format(i)].get())
+            quant = int(globals()['Quantity{}'.format(i)].get())
+            prod_name = globals()['Product_Name{}'.format(i)].get()
+            selling_price = int(globals()['SellingPrice{}'.format(i)].get())
+            data.append((prod_id, quant, prod_name, selling_price))
+        backend.create_bill(data, customer_name, discount)
+        backend.reduce_inventory(data)
 
 
 app = UI()
