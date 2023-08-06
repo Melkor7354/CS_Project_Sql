@@ -15,7 +15,7 @@ class UI(tk.Tk):
             if self.signed_up is False:
                 self.switch_frame(Start)
             else:
-                self.switch_frame(Billing)
+                self.switch_frame(Authorization)
 
         logged_in()
         backend.dark_title_bar(self)
@@ -78,8 +78,26 @@ class Authorization(tk.Frame):
             else:
                 label.config(text="Authorization Failed. Please try again.")
 
-        login = tk.Button(text='Login', command=login)
-        login.place(rely=0.6, relx=0.5)
+        login = MenuButton(text='Login', command=login)
+        login.place(rely=0.6, relx=0.47)
+
+
+class MenuButton(tk.Button):
+    def __init__(self, text, command):
+        tk.Button.__init__(self)
+        self.config(width=15, bg=c.secondary, fg=c.text)
+        self.text = text
+        self.command = command
+        self['command'] = self.command
+        self['text'] = self.text
+
+
+class HomeButton(tk.Button):
+    def __init__(self, command):
+        tk.Button.__init__(self)
+        self.command = command
+        self['command'] = self.command
+        self.config(bg=c.primary, fg=c.text, text="Return to home page", font=c.font)
 
 
 class Welcome(tk.Frame):
@@ -87,10 +105,15 @@ class Welcome(tk.Frame):
         tk.Frame.__init__(self)
         self.config(height=UI.winfo_screenheight(self), width=UI.winfo_screenwidth(self), bg=c.primary)
         TopBar().place(rely=0)
-        a = tk.Label(text='WELCOME', width=UI.winfo_screenwidth(self)-2000, fg=c.text, bg=c.secondary)
-        a.place(rely=0.4)
-        tk.Button(text="Inventory", command=lambda: master.switch_frame(InventoryEntry)).place(relx=0.5, rely=0.5)
-        tk.Button(text="Products", command=lambda: master.switch_frame(ProductEntry)).place(relx=0.5, rely=0.6)
+        tk.Label(text='Inventory: ', fg=c.text, font=c.font, bg=c.primary).place(relx=0.1, y=115)
+        tk.Label(text='Product Entry: ', fg=c.text, font=c.font, bg=c.primary).place(relx=0.1, y=225)
+        tk.Label(text='Billing: ', fg=c.text, font=c.font, bg=c.primary).place(relx=0.1, y=285)
+        MenuButton(text="Inventory Entry", command=lambda: master.switch_frame(InventoryEntry)).place(relx=0.1,
+                                                                                                      y=145)
+        MenuButton(text="View Inventory", command=lambda: master.switch_frame(Inventory)).place(relx=0.1, y=180)
+
+        MenuButton(text="Product Entry", command=lambda: master.switch_frame(ProductEntry)).place(relx=0.1, y=255)
+        MenuButton(text="Billing", command=lambda: master.switch_frame(Billing)).place(relx=0.1, y=315)
 
 
 class TopBar(tk.Frame):
@@ -118,6 +141,7 @@ class InventoryEntry(tk.Frame):
                                 width=70)
         self.warning.place(rely=0.15, relx=0.305)
         TopBar().place(y=0)
+        HomeButton(command=lambda: master.switch_frame(Welcome)).place(relx=0.05, rely=0.05)
         self.add_widget()
         tk.Label(text="Add to Inventory Page", bg=c.primary, fg=c.text).place(rely=0.1, relx=0.448)
         label1 = tk.Label(text='Product ID', width=40, bg=c.primary, fg=c.text, font=c.font)
@@ -179,8 +203,8 @@ class ProductEntry(tk.Frame):
                                 width=70)
         self.warning.place(rely=0.15, relx=0.305)
         TopBar().place(y=0)
+        HomeButton(command=lambda: master.switch_frame(Welcome)).place(relx=0.05, rely=0.05)
         self.add_widget()
-        tk.Button(text="HomePage", command=lambda: master.switch_frame(Welcome)).place(relx=0.05, rely=0.05)
         tk.Label(text="Add to Product List", bg=c.primary, fg=c.text).place(rely=0.1, relx=0.448)
         label1 = tk.Label(text='Product Name', width=20, bg=c.primary, fg=c.text, font=c.font2)
         label2 = tk.Label(text='Product Type', width=20, bg=c.primary, fg=c.text, font=c.font2)
@@ -284,6 +308,7 @@ class Inventory(tk.Frame):
         else:
             self.number2 = 21
         TopBar().place(y=0)
+        HomeButton(command=lambda: master.switch_frame(Welcome)).place(relx=0.05, rely=0.05)
         self.display()
         self.next_b()
         self.search_b()
@@ -379,6 +404,7 @@ class Billing(tk.Frame):
         self.create()
         self.confirm_b()
         self.submit_b()
+        HomeButton(command=lambda: master.switch_frame(Welcome)).place(relx=0.05, rely=0.05)
 
     def display(self):
         for j in range(self.number, self.number2):
