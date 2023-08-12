@@ -1,4 +1,5 @@
 import tkinter as tk
+from PIL import ImageTk, Image
 import colour_scheme as c
 import backend
 type_options = ('Vegetable', 'Cleaning', 'Entertainment', 'Beverage', 'Pulses', 'Fruit', 'Dairy')
@@ -10,6 +11,9 @@ class UI(tk.Tk):
         self._frame = None
         backend.initialize()
         self.signed_up = backend.signed_in()
+        self.title("Computer Science Project")
+        photo = ImageTk.PhotoImage(Image.open('sql-icon.jpeg'))
+        self.iconphoto(False, photo)
 
         def logged_in():
             if self.signed_up is False:
