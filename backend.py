@@ -92,13 +92,13 @@ def check_products(values):
 
 def update_inventory(values):
     for i in values:
-        con.execute("update Inventory set quantity = quantity + {} where Product_ID={}".format(i[0], i[1]))
+        con.execute("update Inventory set quantity = quantity + {} where Product_ID={}".format(int(i[0]), int(i[1])))
     con.commit()
 
 
 def check_data_integrity(values):
     for i in values:
-        cur.execute('SELECT * FROM Products where Product_ID={}'.format(i[0]))
+        cur.execute('SELECT * FROM Products where Product_ID={}'.format(i[1]))
         a = cur.fetchall()
         if len(a) == 0:
             return False
@@ -131,7 +131,7 @@ def dark_title_bar(window):
 def create_bill(data, customer_name="Customer", discount=0):
     date = str(datetime.date.today())
     date_time = datetime.datetime.now()
-    time = date_time.strftime("%H_%M_%S")
+    time = date_time.strftime("%H;%M;%S")
     doc = docx.Document()
     doc.add_heading("XYZ Store", 0)
     doc.add_heading('''XYZ Street, New Delhi, Delhi''', 9)
@@ -161,8 +161,8 @@ def create_bill(data, customer_name="Customer", discount=0):
     We hope to see you again, ''')
     bold = para.add_run("Mr./Mrs. {}".format(customer_name))
     bold.bold = True
-    doc.save(r"{}\{}-{}-{}.docx".format(path2, customer_name.replace(" ", "_"), date, time))
-    os.startfile(r"{}\{}-{}-{}.docx".format(path2, customer_name.replace(' ', '_'), date, time), "open")
+    doc.save(r"{}\{}({}, {}).docx".format(path2, customer_name, date, time))
+    os.startfile(r"{}\{}({}, {}).docx".format(path2, customer_name, date, time), "open")
 
 
 def fetch_data(value):
@@ -173,5 +173,5 @@ def fetch_data(value):
 
 def reduce_inventory(data):
     for i in data:
-        con.execute("update Inventory set quantity = quantity + {} where Product_ID={}".format(i[0], i[1]))
+        con.execute("update Inventory set quantity = quantity - {} where Product_ID={}".format(i[1], i[0]))
     con.commit()

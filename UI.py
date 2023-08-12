@@ -135,6 +135,13 @@ class InventoryEntry(tk.Frame):
         self.config(width=UI.winfo_screenwidth(self), height=UI.winfo_screenheight(self), bg=c.primary)
         self.i = 0
         self.values = []
+        self.values2 = backend.display_inventory()
+        self.number = 0
+        self.number2 = 21
+        if len(self.values2) < 21:
+            self.number2 = len(self.values2)
+        else:
+            self.number2 = 21
         self.create()
         self.sub()
         self.warning = tk.Label(text='Enter Product ID and Quantity to add to inventory.', bg=c.primary, fg=c.text,
@@ -144,25 +151,56 @@ class InventoryEntry(tk.Frame):
         HomeButton(command=lambda: master.switch_frame(Welcome)).place(relx=0.05, rely=0.05)
         self.add_widget()
         tk.Label(text="Add to Inventory Page", bg=c.primary, fg=c.text).place(rely=0.1, relx=0.448)
-        label1 = tk.Label(text='Product ID', width=40, bg=c.primary, fg=c.text, font=c.font)
-        label2 = tk.Label(text='Quantity', width=40, bg=c.primary, fg=c.text, font=c.font)
-        label1.place(relx=0.23, rely=0.2)
-        label2.place(relx=0.45, rely=0.2)
+        label1 = tk.Label(text='Product ID', width=20, bg=c.primary, fg=c.text, font=c.font)
+        label2 = tk.Label(text='Quantity', width=20, bg=c.primary, fg=c.text, font=c.font)
+        label1.place(relx=0.165, rely=0.2)
+        label2.place(relx=0.315, rely=0.2)
+        self.display()
+        self.search_b()
 
     def create(self):
         self.add_button = tk.Button(self, text='Add more?', command=self.add_widget, bg=c.secondary, fg=c.text)
-        self.add_button.place(relx=0.80, rely=0.20)
+        self.add_button.place(relx=0.50, rely=0.20)
 
     def sub(self):
         self.submit_button = tk.Button(self, text='Submit?', command=self.submit, bg=c.secondary, fg=c.text)
-        self.submit_button.place(relx=0.15, rely=0.2)
+        self.submit_button.place(relx=0.12, rely=0.2)
+
+    def display(self):
+        for j in range(self.number, self.number2):
+            globals()['Product_ID1{}'.format(j)] = DisplayField(width=5)
+            globals()['Product_Name1{}'.format(j)] = DisplayField(width=30)
+            globals()['Product_ID1{}'.format(j)].place(relx=0.615, y=((j + 1) * 24) + 150)
+            globals()['Product_Name1{}'.format(j)].place(relx=0.656, y=((j + 1) * 24) + 150)
+            globals()['Product_ID1{}'.format(j)].insert(0, str(self.values2[j][0]))
+            globals()['Product_Name1{}'.format(j)].insert(0, str(self.values2[j][1]))
+            globals()['Product_ID1{}'.format(j)].config(state='disabled')
+            globals()['Product_Name1{}'.format(j)].config(state='disabled')
+
+    def search_b(self):
+        def search():
+            val = backend.search(a.get())
+            for j in range(self.number, self.number2):
+                globals()['Product_ID1{}'.format(j)].destroy()
+                globals()['Product_Name1{}'.format(j)].destroy()
+            self.values2 = val
+            if len(self.values2) < 21:
+                self.number2 = len(self.values2)
+            else:
+                self.number2 = 21
+            self.display()
+
+        a = tk.Entry(bg='red', fg='white', width=15)
+        a.place(relx=0.7, rely=0.2)
+        b = tk.Button(bg='red', fg='white', text='Submit', command=search)
+        b.place(relx=0.8, rely=0.2)
 
     def add_widget(self):
         if self.i < 21:
-            globals()['Variable{}'.format(str(self.i))] = tk.Entry(bg=c.secondary, fg=c.text, width=40)
-            globals()['Variable{}'.format(str(self.i))].place(relx=0.28, y=((self.i + 1) * 23)+150)
-            globals()['variable{}'.format(str(self.i))] = tk.Entry(bg=c.secondary, fg=c.text, width=40)
-            globals()['variable{}'.format(str(self.i))].place(relx=0.5, y=((self.i + 1) * 23)+150)
+            globals()['Variable{}'.format(str(self.i))] = tk.Entry(bg=c.secondary, fg=c.text, width=20)
+            globals()['Variable{}'.format(str(self.i))].place(relx=0.2, y=((self.i + 1) * 23)+150)
+            globals()['variable{}'.format(str(self.i))] = tk.Entry(bg=c.secondary, fg=c.text, width=20)
+            globals()['variable{}'.format(str(self.i))].place(relx=0.35, y=((self.i + 1) * 23)+150)
             self.i += 1
         else:
             self.warning.config(text='Max. number of entries obtained. For more submit again.')
@@ -172,7 +210,7 @@ class InventoryEntry(tk.Frame):
             try:
                 globals()['Var{}'.format(str(i))] = int(globals()['Variable{}'.format(str(i))].get())
                 globals()['var{}'.format(str(i))] = int(globals()['variable{}'.format(str(i))].get())
-                self.values.append([globals()['Var{}'.format(str(i))], globals()['var{}'.format(str(i))]])
+                self.values.append([globals()['var{}'.format(str(i))], globals()['Var{}'.format(str(i))]])
             except ValueError:
                 self.warning.config(text='Please check your input. Invalid data types entered.')
                 self.values = []
@@ -306,7 +344,7 @@ class Inventory(tk.Frame):
         if len(self.values) < 21:
             self.number2 = len(self.values)
         else:
-            self.number2 = 21
+           self.number2 = 21
         TopBar().place(y=0)
         HomeButton(command=lambda: master.switch_frame(Welcome)).place(relx=0.05, rely=0.05)
         self.display()
@@ -314,6 +352,7 @@ class Inventory(tk.Frame):
         self.search_b()
 
     def display(self):
+        self.values = backend.display_inventory()
         for j in range(self.number, self.number2):
             globals()['Product_ID{}'.format(j)] = DisplayField(width=5)
             globals()['Product_Name{}'.format(j)] = DisplayField(width=30)
