@@ -30,6 +30,8 @@ def initialize():
     Product_Type varchar(20), Cost int not null, Selling_Price int not null)''')
     con.execute('''CREATE TABLE IF NOT EXISTS Inventory(Product_ID int not null, product_name varchar(30) not null, 
     quantity int not null, FOREIGN KEY(Product_ID) REFERENCES Products(Product_ID) ON DELETE CASCADE)''')
+    con.execute('''CREATE TABLE IF NOT EXISTS Profits(Order_Date DATE, Profit int)''')
+    con.execute('''CREATE TABLE IF NOT EXISTS Customer(Customer_Name varchar(30), Profits int)''')
     con.commit()
 
 
@@ -166,7 +168,7 @@ def create_bill(data, customer_name="Customer", discount=0):
 
 
 def fetch_data(value):
-    cur.execute("SELECT Product_Name, Selling_Price from Products where Product_ID={}".format(value))
+    cur.execute("SELECT Product_Name, Selling_Price, Cost from Products where Product_ID={}".format(value))
     val = cur.fetchall()
     return val
 
@@ -174,4 +176,27 @@ def fetch_data(value):
 def reduce_inventory(data):
     for i in data:
         con.execute("update Inventory set quantity = quantity - {} where Product_ID={}".format(i[1], i[0]))
+    con.commit()
+
+
+def customer(value):
+    con.execute("INSERT INTO Customer VALUES('{}', 0)".format(value))
+    con.commit()
+
+
+def customer_profit(value):
+    con.execute("update Customer set Profits = Profits + {}".format(value))
+    con.commit()
+
+
+def customer_exists(value):
+    cur.execute("SELECT * FROM Customer where Customer_Name='{}'".format(value))
+    if len(cur.fetchall()) > 0:
+        return True
+    else:
+        return False
+
+
+def date_profits(values):
+    con.execute("INSERT INTO Profits VALUES('{}', {})".format(values[0], values[1]))
     con.commit()

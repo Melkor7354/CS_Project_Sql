@@ -1,8 +1,10 @@
 import tkinter as tk
-from PIL import ImageTk, Image
+import datetime
 import colour_scheme as c
 import backend
+import psutil
 type_options = ('Vegetable', 'Cleaning', 'Entertainment', 'Beverage', 'Pulses', 'Fruit', 'Dairy')
+
 
 
 class UI(tk.Tk):
@@ -12,8 +14,6 @@ class UI(tk.Tk):
         backend.initialize()
         self.signed_up = backend.signed_in()
         self.title("Computer Science Project")
-        photo = ImageTk.PhotoImage(Image.open('sql-icon.jpeg'))
-        self.iconphoto(False, photo)
 
         def logged_in():
             if self.signed_up is False:
@@ -25,6 +25,20 @@ class UI(tk.Tk):
         backend.dark_title_bar(self)
         self.minsize(self.winfo_screenwidth()-300, self.winfo_screenheight()-200)
         self.maxsize(self.winfo_screenwidth()-300, self.winfo_screenheight()-200)
+        self.lab = tk.Label(master=self, bg=c.primary, font=c.font, fg=c.text, text='00:00:00')
+        self.lab.place(relx=0.85, rely=0.1)
+        self.lab2 = tk.Label(master=self, bg=c.primary, font=c.font, fg=c.text, text='0%')
+        self.lab2.place(relx=0.94, rely=0.1)
+
+        def update():
+            date_time = datetime.datetime.now()
+            time = date_time.strftime("%H:%M:%S")
+            battery = psutil.sensors_battery()
+            self.lab2['text'] = str(battery.percent) + '%'
+            self.lab['text'] = time
+            self.after(1000, update)
+
+        update()
 
     def switch_frame(self, frame_class):
         """Destroys current frame and replaces it with a new one."""
@@ -55,7 +69,7 @@ Enter your username and password.''', fg=c.text, bg=c.secondary, width=40).place
             backend.sign_up(username=u, password=p)
             master.switch_frame(Authorization)
 
-        submit = tk.Button(text='submit', command=submit)
+        submit = MenuButton(text='submit', command=submit)
         submit.place(rely=0.6, relx=0.5)
 
 
@@ -84,6 +98,20 @@ class Authorization(tk.Frame):
 
         login = MenuButton(text='Login', command=login)
         login.place(rely=0.6, relx=0.47)
+        self.lab = tk.Label(master=self, bg=c.primary, font=c.font, fg=c.text, text='00:00:00')
+        self.lab.place(relx=0.85, rely=0.1)
+        self.lab2 = tk.Label(master=self, bg=c.primary, font=c.font, fg=c.text, text='0%')
+        self.lab2.place(relx=0.94, rely=0.1)
+
+        def update():
+            date_time = datetime.datetime.now()
+            time = date_time.strftime("%H:%M:%S")
+            battery = psutil.sensors_battery()
+            self.lab2['text'] = str(battery.percent) + '%'
+            self.lab['text'] = time
+            self.after(1000, update)
+
+        update()
 
 
 class MenuButton(tk.Button):
@@ -118,6 +146,20 @@ class Welcome(tk.Frame):
 
         MenuButton(text="Product Entry", command=lambda: master.switch_frame(ProductEntry)).place(relx=0.1, y=255)
         MenuButton(text="Billing", command=lambda: master.switch_frame(Billing)).place(relx=0.1, y=315)
+        self.lab = tk.Label(master=self, bg=c.primary, font=c.font, fg=c.text, text='00:00:00')
+        self.lab.place(relx=0.85, rely=0.1)
+        self.lab2 = tk.Label(master=self, bg=c.primary, font=c.font, fg=c.text, text='0%')
+        self.lab2.place(relx=0.94, rely=0.1)
+
+        def update():
+            date_time = datetime.datetime.now()
+            time = date_time.strftime("%H:%M:%S")
+            battery = psutil.sensors_battery()
+            self.lab2['text'] = str(battery.percent) + '%'
+            self.lab['text'] = time
+            self.after(1000, update)
+
+        update()
 
 
 class TopBar(tk.Frame):
@@ -161,6 +203,20 @@ class InventoryEntry(tk.Frame):
         label2.place(relx=0.315, rely=0.2)
         self.display()
         self.search_b()
+        self.lab = tk.Label(master=self, bg=c.primary, font=c.font, fg=c.text, text='00:00:00')
+        self.lab.place(relx=0.85, rely=0.1)
+        self.lab2 = tk.Label(master=self, bg=c.primary, font=c.font, fg=c.text, text='0%')
+        self.lab2.place(relx=0.94, rely=0.1)
+
+        def update():
+            date_time = datetime.datetime.now()
+            time = date_time.strftime("%H:%M:%S")
+            battery = psutil.sensors_battery()
+            self.lab2['text'] = str(battery.percent) + '%'
+            self.lab['text'] = time
+            self.after(1000, update)
+
+        update()
 
     def create(self):
         self.add_button = tk.Button(self, text='Add more?', command=self.add_widget, bg=c.secondary, fg=c.text)
@@ -256,6 +312,20 @@ class ProductEntry(tk.Frame):
         label2.place(relx=0.38, rely=0.2)
         label3.place(relx=0.49, rely=0.2)
         label4.place(relx=0.60, rely=0.2)
+        self.lab = tk.Label(master=self, bg=c.primary, font=c.font, fg=c.text, text='00:00:00')
+        self.lab.place(relx=0.85, rely=0.1)
+        self.lab2 = tk.Label(master=self, bg=c.primary, font=c.font, fg=c.text, text='0%')
+        self.lab2.place(relx=0.94, rely=0.1)
+
+        def update():
+            date_time = datetime.datetime.now()
+            time = date_time.strftime("%H:%M:%S")
+            battery = psutil.sensors_battery()
+            self.lab2['text'] = str(battery.percent) + '%'
+            self.lab['text'] = time
+            self.after(1000, update)
+
+        update()
 
     def create(self):
         self.add_button = tk.Button(self, text='Add more?', command=self.add_widget, bg=c.secondary, fg=c.text)
@@ -348,12 +418,26 @@ class Inventory(tk.Frame):
         if len(self.values) < 21:
             self.number2 = len(self.values)
         else:
-           self.number2 = 21
+            self.number2 = 21
         TopBar().place(y=0)
         HomeButton(command=lambda: master.switch_frame(Welcome)).place(relx=0.05, rely=0.05)
         self.display()
         self.next_b()
         self.search_b()
+        self.lab = tk.Label(master=self, bg=c.primary, font=c.font, fg=c.text, text='00:00:00')
+        self.lab.place(relx=0.85, rely=0.1)
+        self.lab2 = tk.Label(master=self, bg=c.primary, font=c.font, fg=c.text, text='0%')
+        self.lab2.place(relx=0.94, rely=0.1)
+
+        def update():
+            date_time = datetime.datetime.now()
+            time = date_time.strftime("%H:%M:%S")
+            battery = psutil.sensors_battery()
+            self.lab2['text'] = str(battery.percent) + '%'
+            self.lab['text'] = time
+            self.after(1000, update)
+
+        update()
 
     def display(self):
         self.values = backend.display_inventory()
@@ -422,6 +506,7 @@ class Billing(tk.Frame):
             self.number2 = len(self.values)
         else:
             self.number2 = 21
+        self.profits = 0
         self.warning = tk.Label(text='Enter Product ID for billing.', bg=c.primary, fg=c.text,
                                 width=70)
         self.warning.place(rely=0.08, relx=0.305)
@@ -448,6 +533,20 @@ class Billing(tk.Frame):
         self.confirm_b()
         self.submit_b()
         HomeButton(command=lambda: master.switch_frame(Welcome)).place(relx=0.05, rely=0.05)
+        self.lab = tk.Label(master=self, bg=c.primary, font=c.font, fg=c.text, text='00:00:00')
+        self.lab.place(relx=0.85, rely=0.1)
+        self.lab2 = tk.Label(master=self, bg=c.primary, font=c.font, fg=c.text, text='0%')
+        self.lab2.place(relx=0.94, rely=0.1)
+
+        def update():
+            date_time = datetime.datetime.now()
+            time = date_time.strftime("%H:%M:%S")
+            battery = psutil.sensors_battery()
+            self.lab2['text'] = str(battery.percent) + '%'
+            self.lab['text'] = time
+            self.after(1000, update)
+
+        update()
 
     def display(self):
         for j in range(self.number, self.number2):
@@ -481,6 +580,7 @@ class Billing(tk.Frame):
     def confirm_b(self):
         def confirm():
             s = 0
+            c = 0
             for i in range(self.i):
                 data = backend.fetch_data(globals()['ProductId{}'.format(i)].get())
                 globals()['Product_Name{}'.format(i)].insert(0, str(data[0][0]))
@@ -489,10 +589,12 @@ class Billing(tk.Frame):
                 globals()['SellingPrice{}'.format(i)].config(state='disabled')
                 a = globals()['Quantity{}'.format(i)].get()
                 s += int(a)*(int(data[0][1]))
+                c += int(a)*(int(data[0][2]))
             b = int(self.discount.get())
             if b == '' or b is None:
                 b = 0
             payable = (s*1.18)*((100-b)/100)
+            self.profits = s-c
             self.warning.config(text="Net Payable Amount: {}".format(payable))
 
         self.confirm_button = tk.Button(self, text="Confirm Bill?", command=confirm, bg=c.secondary, fg=c.text)
@@ -527,6 +629,7 @@ class Billing(tk.Frame):
     def submit(self):
         customer_name = self.customer_name.get()
         discount = int(self.discount.get())
+        date = str(datetime.date.today())
         data = []
         for i in range(self.i):
             prod_id = (globals()['ProductId{}'.format(i)].get())
@@ -536,6 +639,18 @@ class Billing(tk.Frame):
             data.append((prod_id, quant, prod_name, selling_price))
         backend.create_bill(data, customer_name, discount)
         backend.reduce_inventory(data)
+        if backend.customer_exists(customer_name):
+            backend.customer_profit(self.profits)
+            backend.date_profits([date, self.profits])
+        else:
+            backend.customer(customer_name)
+            backend.customer_profit(self.profits)
+            backend.date_profits([date, self.profits])
+
+
+class Statistics(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self)
 
 
 app = UI()
