@@ -6,7 +6,6 @@ import psutil
 type_options = ('Vegetable', 'Cleaning', 'Entertainment', 'Beverage', 'Pulses', 'Fruit', 'Dairy')
 
 
-
 class UI(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
@@ -22,7 +21,6 @@ class UI(tk.Tk):
                 self.switch_frame(Authorization)
 
         logged_in()
-        backend.dark_title_bar(self)
         self.minsize(self.winfo_screenwidth()-300, self.winfo_screenheight()-200)
         self.maxsize(self.winfo_screenwidth()-300, self.winfo_screenheight()-200)
         self.lab = tk.Label(master=self, bg=c.primary, font=c.font, fg=c.text, text='00:00:00')
@@ -129,7 +127,7 @@ class HomeButton(tk.Button):
         tk.Button.__init__(self)
         self.command = command
         self['command'] = self.command
-        self.config(bg=c.primary, fg=c.text, text="Return to home page", font=c.font)
+        self.config(bg=c.secondary, fg=c.text, text="Return to home page", font=c.font)
 
 
 class Welcome(tk.Frame):
@@ -250,9 +248,9 @@ class InventoryEntry(tk.Frame):
                 self.number2 = 21
             self.display()
 
-        a = tk.Entry(bg='red', fg='white', width=15)
+        a = tk.Entry(bg='red', fg='black', width=15)
         a.place(relx=0.7, rely=0.2)
-        b = tk.Button(bg='red', fg='white', text='Submit', command=search)
+        b = tk.Button(bg='red', fg='black', text='Submit', command=search)
         b.place(relx=0.8, rely=0.2)
 
     def add_widget(self):
@@ -487,9 +485,9 @@ class Inventory(tk.Frame):
                 self.number2 = 21
             self.display()
 
-        a = tk.Entry(bg='red', fg='white', width=15)
+        a = tk.Entry(bg='red', fg='black', width=15)
         a.place(relx=0.7, rely=0.2)
-        b = tk.Button(bg='red', fg='white', text='Submit', command=search)
+        b = tk.Button(bg='red', fg='black', text='Submit', command=search)
         b.place(relx=0.8, rely=0.2)
 
 
@@ -572,9 +570,9 @@ class Billing(tk.Frame):
                 self.number2 = 21
             self.display()
 
-        a = tk.Entry(bg='red', fg='white', width=15)
+        a = tk.Entry(bg='red', fg='black', width=15)
         a.place(relx=0.7, rely=0.2)
-        b = tk.Button(bg='red', fg='white', text='Submit', command=search)
+        b = tk.Button(bg='red', fg='black', text='Submit', command=search)
         b.place(relx=0.8, rely=0.2)
 
     def confirm_b(self):

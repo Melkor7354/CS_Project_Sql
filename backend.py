@@ -1,6 +1,5 @@
 import sqlite3 as sql
 import os
-import ctypes as ct
 import docx
 import datetime
 
@@ -9,6 +8,7 @@ _dir = 'billing_db'
 _dir2 = 'billing_db\Bills'
 path = os.path.join(parent_dir, _dir)
 path2 = os.path.join(parent_dir, _dir2)
+
 
 
 def initialize():
@@ -45,7 +45,6 @@ def signed_in():
 
 
 def sign_up(username, password):
-    con.execute('''CREATE TABLE IF NOT EXISTS Auth(Username varchar(20) not null, password varchar(20) not null)''')
     con.execute('''INSERT INTO Auth VALUES("{}", "{}")'''.format(username, password))
     con.execute('''INSERT INTO SignedIn VALUES(1)''')
     con.commit()
@@ -117,17 +116,6 @@ def display_inventory():
 def search(value):
     cur.execute("SELECT * FROM Inventory where product_name like '%{}%'".format(value.title()))
     return cur.fetchall()
-
-
-def dark_title_bar(window):
-    window.update()
-    set_window_attribute = ct.windll.dwmapi.DwmSetWindowAttribute
-    get_parent = ct.windll.user32.GetParent
-    hwnd = get_parent(window.winfo_id())
-    value = 2
-    value = ct.c_int(value)
-    set_window_attribute(hwnd, 20, ct.byref(value),
-                         4)
 
 
 def create_bill(data, customer_name="Customer", discount=0):

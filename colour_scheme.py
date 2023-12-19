@@ -1,7 +1,7 @@
-primary = '#111111'
-secondary = '#124FFF'
-tertiary = '#423121'
-text = '#00ffff'
-font = ['Courier', 12]
+primary = 'white'
+secondary = 'red'
+tertiary = '#00008B'
+text = 'black'
+font = ['Courier', 11]
 font2 = ['Courier', 9]
 font3 = ['Courier', 7]

@@ -1,0 +1,3 @@
+values = [[potato, vegetable, 30, 50], [tomato, vegetable, 40, 50]]
+i = [potato, vegetable, 30, 50]
+i[0] = product name
